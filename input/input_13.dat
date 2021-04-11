@@ -1,0 +1,64 @@
+&input_parameters
+NOS    = 1000,
+NOD    = 2,
+LX     = 10,
+LY     = 10,
+LZ     = 10,
+KX     = 2,
+KY     = 5,
+KZ     = 2,
+NOxxz  = 3000,
+ALG=1,
+wr_wf  = 0,
+re_wf  = 0,
+cal_lm = 0,
+cal_cf = 0,
+cal_dsf= 0,
+FILExxz= "input/list_xxz_term_1000.dat",
+FILEwf = "work/",
+&end
+
+&input_static
+NOV    = 2,
+NOLM   = 1000,
+NOCF   = 1000000,
+FILElm = "input/list_local_mag.dat",
+FILECF = "input/list_cf_ss.dat",
+&end
+
+&input_dynamic
+spsmsz = 2,
+itr_dsf= 200,
+qx     = 0.0d0,
+qy     = 0.0d0,
+qz     = 1.57079632679d0,
+rfield = 0.0d0,
+FILEpos= "input/list_site_position_1000_type1.dat",
+&end
+
+&input_ConvLan
+NOE0    = 2,
+minitr0=4,
+maxitr0=10000,
+lnc_ene_conv0 = 1.0d-14,
+i_vec_min0=1,
+i_vec_max0=1,
+&end
+
+&input_lancz
+lnc_ene_conv=1.0d-14,
+maxitr=10000,
+minitr=20,
+itrint=5,
+&end
+
+&input_TRLan
+NOE = 4,
+NOK = 4,
+NOM = 8,
+maxitr=10000,
+lnc_ene_conv=1.0d-14,
+i_vec_min=1,
+i_vec_max=2,
+&end
+
