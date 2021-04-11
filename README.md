@@ -4,6 +4,8 @@ This is a program package, proposed in arXiv:xxxx.xxxx, based on the (thick-rest
 
 # Requirements
 
+This package includes the Fortran source codes, samples, and manual. Intel Fortran compiler (ver. XX or later) + MKL libraries or gfrotran + LAPACK (ver. YY or later) + BLAS (ver. ZZ or later) are prerequisites.
+
 # Compile
 
 # How to run
