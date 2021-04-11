@@ -10,10 +10,8 @@ This package includes the Fortran source codes, samples, and manual. Intel Fortr
 
 A simple Makefile is prepared to build the executable, and the following procedures after downloading the QS3.tar.gz will give the executable file, QS3.exe.
 
-$ tar -zxvf QS3.tar.gz
-
-$ cd QS3/source
-
-$ make
+$ tar -zxvf QS3.tar.gz　<br>
+$ cd QS3/source　<br>
+$ make　<br>
 
 # How to run
