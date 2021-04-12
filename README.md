@@ -37,5 +37,4 @@ $ make　<br>
 
 # Developers
 
-Hiroshi Ueda (Chief) <br>
-Tokuro Shimokawa <br>
+Hiroshi Ueda and Tokuro Shimokawa
