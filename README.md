@@ -38,12 +38,12 @@ If you do not have, please push "Code" button and "Download ZIP" on this web pag
 $ unzip ED-main.zip <br>
 $ cd ED-main
 
-A simple Makefile is prepared to build the executable file "QS3.exe", and the following procedures after the cloning/downloading will give the executable and execute sample program
+A simple Makefile is prepared to build the executable file "QS3.exe", and the following procedures after the cloning/downloading will give the executable and execute sample programs
 
 $ cd script <br>
 $ ./make.sh <br>
 
-After executing the sample program, all results are stored in the "output" directory. The reference data is stored in the "output_ref" directory, so please check the calculation results if necessary. 
+After executing the sample, all results are stored in the "output" directory. The reference data is stored in the "output_ref" directory, so please check the calculation results if necessary. 
 
 # Developers
 
