@@ -2,6 +2,10 @@
 ! 2020/12/23 coded by Hiroshi Ueda (Osaka Univ.) & Tokuro Shimokawa (OIST)
 !    This numerical program can be applied to S=1/2 XXZ spin systems 
 ! on regular lattices near saturation.
+!
+! 2021/01/02 major update of get_lm_2_wave_vector, get_cf_2_wave_vector, and their branches.
+! 2021/01/03 major update of list_fly and do not use st_list & st_list_new
+!
 !******************************************************************************************************
 program main
   !$ use omp_lib
@@ -9,13 +13,13 @@ program main
     ,allocate_lists_omp_SQ
   use input_param, only: read_ip, THS, NOS, NOD, NOV, LX, LY, LZ, shift_x_SQ, shift_y_SQ, &
     shift_z_SQ,ene,psi,ALG,cal_lm,cal_cf,cal_dsf, &
-    NOLM,NOCF,FILElm,FILECF,FILEpos,rkx,rky,rkz,st_list,list_r,list_s,qx,qy,qz, &
-    kvec_calc,rfield,itr_dsf,wr_wf, write_wf,re_wf,read_wf
+    NOLM,NOCF,FILElm,FILECF,FILEpos,list_r,list_s,qx,qy,qz, &
+    kvec_calc,rfield,itr_dsf,wr_wf, write_wf,re_wf,read_wf,OUTDIR
   use eigen_solver, only: my_trlanczos_routines_complex,Full_diag_routines,calcu_FM_energy,&
     i_vec_min, i_vec_max,read_input_TRLan,NOE
   use lanczos, only: read_lanczos_para, lanczos_routines
-  use get_expectation_values, only: allocate_expe_mem,get_lm_wave_vector,get_cf_wave_vector, &
-    calcu_DSF_wavevector
+  use get_expectation_values, only: allocate_expe_mem,&
+    calcu_DSF_wavevector,get_lm_2_wave_vector, get_cf_2_wave_vector
   implicit none
   real(8) :: eneFM
   complex(8) :: prdct
@@ -42,7 +46,7 @@ program main
     write(*,'(" ### Focus on the FM state. ")')
     eneFM=0.0d0
     call calcu_FM_energy(eneFM)
-    open(10,file='output/energy.dat',position='append')
+    open(10,file=trim(adjustl(OUTDIR))//'energy.dat',position='append')
     write(10,*) eneFM
     close(10)
     write(*,*) "We are calculating eneFM only"
@@ -83,12 +87,12 @@ program main
     !
     if(cal_lm==1)then
       write(*,'(" ### Get local magnetizations. ")')
-      call get_lm_wave_vector(psi,NOLM,NOD,THS,1,rkx,rky,rkz,st_list,list_r)
+      call get_lm_2_wave_vector(psi,NOD,THS,1,NOS)
     end if
     !
     if(cal_cf==1)then
       write(*,'(" ### Get correlation functions. ")')
-      call get_cf_wave_vector(psi,NOCF,NOD,THS,1,rkx,rky,rkz,st_list,list_r,list_s)    
+      call get_cf_2_wave_vector(psi,NOCF,NOD,THS,1,list_r,list_s,NOS)
     end if
     !
   else if(ALG.eq.2 )then 
@@ -145,12 +149,12 @@ program main
     !
     if(cal_lm==1)then
       write(*,'(" ### Get local magnetizations. ")')
-      call get_lm_wave_vector(psi,NOLM,NOD,THS,NOV,rkx,rky,rkz,st_list,list_r)
+      call get_lm_2_wave_vector(psi,NOD,THS,NOV,NOS)
     end if
     !
     if(cal_cf==1)then
       write(*,'(" ### Get correlation functions. ")')
-      call get_cf_wave_vector(psi,NOCF,NOD,THS,NOV,rkx,rky,rkz,st_list,list_r,list_s)    
+      call get_cf_2_wave_vector(psi,NOCF,NOD,THS,NOV,list_r,list_s,NOS)
     end if
     !
   else if(ALG.eq.3)then
@@ -164,12 +168,12 @@ program main
     !
     if(cal_lm==1)then
       write(*,'(" ### Get local magnetizations. ")')
-      call get_lm_wave_vector(psi,NOLM,NOD,THS,THS,rkx,rky,rkz,st_list,list_r)   
+      call get_lm_2_wave_vector(psi,NOD,THS,THS,NOS)
     end if
     !
     if(cal_cf==1)then
       write(*,'(" ### Get correlation functions. ")')
-      call get_cf_wave_vector(psi,NOCF,NOD,THS,THS,rkx,rky,rkz,st_list,list_r,list_s)   
+      call get_cf_2_wave_vector(psi,NOCF,NOD,THS,THS,list_r,list_s,NOS)
     end if
   end if
   !

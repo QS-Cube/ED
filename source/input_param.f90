@@ -3,14 +3,17 @@ module input_param
   integer :: NOS       ! number of sites
   integer :: NOD       ! number of down spins
   integer :: NOV       ! Number of lowest eigenvectors used for computing static physical quantities.
-  integer :: THS       ! total hilbelt space of S^z_{tot} = NOS/2 - NOD: THS = Combination(NOS,NOD)
+  integer :: THS       ! total hilbelt space of S^z_{tot} = NOS/2 - NOD: THS   = combination(NOS,NOD)
   integer :: NOLM      ! numver of expectation values <Sz_i>
   integer :: NOCF      ! numver of expectation values <Sz_i sz_j> or <S+_i S-_j>
   integer :: NOxxz     ! number of XXZ interaction
   integer :: ALG        !1:Conventional Lanczos,  2:Thick-Restarted Lanczos, 3:Full diagonalization
   integer, allocatable :: p_xxz(:,:)  ! pair of xxz interaction: p_xxz(1:2,1:NOxxz) !2020/7/17-add
   real(8), allocatable :: Jint(:,:)   ! XXZ term: Jint(1:NOxxz, 2:3)
+  real(8), allocatable :: sJint(:,:)  ! scaled XXZ term: sJint(1:NOxxz, 2) = Jint(1:NOxxz, 2)/2, 
+                                      !                  sJint(1:NOxxz, 3) = Jint(1:NOxxz, 2)/4, 
   character(100) :: FILExxz, FILElm, FILECF, FILEwf, FILEp, FILEp2 !2020/1/5-modified, 2020/1/12-add
+  character(100) :: OUTDIR
 
   ! ! path of file containing interaction list of xxz interactions
   integer :: random, check_p, wr_wf, re_wf, cal_lm, cal_cf, cal_dsf   ! flags
@@ -28,14 +31,12 @@ module input_param
   real(8) :: PI, rkx, rky, rkz
   complex(8),allocatable :: explist(:,:,:)
   integer, allocatable :: list_s(:)                         
-  real(8), allocatable :: list_r(:)                           
-  integer, allocatable ::st_list(:,:)
+  real(8), allocatable :: list_r(:)
   integer, allocatable :: shift_x_SQ(:), shift_y_SQ(:), shift_z_SQ(:) 
 
   !for DSF under wavevector decomposition 
   integer::NOD_new
   integer::THS_new
-  integer,allocatable :: st_list_new(:,:)
   real(8), allocatable :: list_r_new(:)
   integer, allocatable::list_s_new(:)
   real(8)::rkx_new,rky_new,rkz_new
@@ -43,7 +44,7 @@ module input_param
 
   !
   namelist /input_parameters/ NOS, NOD, LX,LY,LZ,KX,KY,KZ,NOxxz, &
-    &          ALG, cal_lm, cal_cf, cal_dsf, wr_wf, re_wf, FILExxz,FILEwf
+    &          ALG, cal_lm, cal_cf, cal_dsf, wr_wf, re_wf, FILExxz, FILEwf, OUTDIR
 
   namelist /input_static/ NOV, NOLM, NOCF, FILElm, FILECF
 
@@ -80,7 +81,7 @@ contains
     call random_seed
     !
     write(*,'(" ### Allocation arrays. ")')
-    allocate(p_xxz(2,NOxxz),Jint(NOxxz,2:3),shift_x_SQ(NOS),shift_y_SQ(NOS),&
+    allocate(p_xxz(2,NOxxz),Jint(NOxxz,2:3),sJint(NOxxz,2:3),shift_x_SQ(NOS),shift_y_SQ(NOS),&
       shift_z_SQ(NOS),explist(0:LX,0:LY,0:LZ))
     !
     write(*,'(" ### Set phase factors. ")')
@@ -91,6 +92,8 @@ contains
     open(10, file=trim(adjustl(FILExxz)),status='old')
     do i = 1, NOxxz
       read(10,*) p_xxz(1,i), p_xxz(2,i), Jint(i,2), Jint(i,3)
+      sJint(i,2) = Jint(i,2) * 0.5d0
+      sJint(i,3) = Jint(i,3) * 0.25d0
       if( p_xxz(1,i) > p_xxz(2,i) )then
         tmp = p_xxz(1,i)
         p_xxz(1,i) = p_xxz(2,i)
@@ -99,13 +102,16 @@ contains
     end do
     close(10)
     !
-    write(*,'("************************************************************************************")')
-    write(*,*) "         i         j          J^{2}_{ij}           J^{3}_{ij}"
-    write(*,'("************************************************************************************")')
+    write(*,'(" ### write ouput/FILExxz.dat. ")')
+    open(10,file=trim(adjustl(OUTDIR))//'input_xxz.dat',position='append')
+    write(10,'("************************************************************************************")')
+    write(10,*) "         i         j          J^{2}_{ij}           J^{3}_{ij}"
+    write(10,'("************************************************************************************")')
     do i = 1, NOxxz
-      write(*,*) p_xxz(1,i), p_xxz(2,i), Jint(i,2), Jint(i,3)
+      write(10,*) p_xxz(1,i), p_xxz(2,i), Jint(i,2), Jint(i,3)
     end do
-    write(*,'("************************************************************************************")')
+    write(10,'("************************************************************************************")')
+    close(10)    
     !
     return
   end subroutine read_ip

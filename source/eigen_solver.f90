@@ -6,7 +6,8 @@ module eigen_solver
   real(8) :: lnc_ene_conv
   namelist /input_TRLan/ NOE, NOK, NOM, maxitr, lnc_ene_conv, i_vec_min, i_vec_max
 contains
-  subroutine my_trlanczos_routines_complex(ene,psi,THS) 
+  subroutine my_trlanczos_routines_complex(ene,psi,THS)
+    use input_param, only : OUTDIR
     real(8), allocatable, intent(out) :: ene(:)
     complex(8),allocatable, intent(out) :: psi(:,:)
     integer, intent(in) :: THS 
@@ -31,7 +32,7 @@ contains
       write(*,'(i5, 1es25.15)') i, ene(i)
     end do
 
-    open(10,file='output/energy.dat',position='append')
+    open(10,file=trim(adjustl(OUTDIR))//'energy.dat',position='append')
     do i = 1, NOE
       write(10,'(i5, 1es25.15)') i, ene(i)
     end do
@@ -65,7 +66,7 @@ contains
   end subroutine Full_diag_routines
 
   subroutine lancz_eigen_val_complex(ene, psi) 
-    use input_param, only: NOD, list_s, list_r, st_list, explist 
+    use input_param, only: NOD, list_s, list_r, explist 
     real(8), intent(inout) :: ene(1:NOM)
     complex(8), intent(inout) :: psi(1:dim,1:NOM+1)
     real(8), allocatable :: alpha(:), beta(:), coef(:,:), conv(:)
@@ -97,7 +98,7 @@ contains
     do i = 1, NOM
       call zdscal( dim, 1.0d0/beta(i-1), psi(1,i), 1 )
       call system_clock(t1)
-      call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,NOD,list_s,list_r,st_list,explist) 
+      call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,NOD,list_s,list_r,explist) 
       call system_clock(t2,t_rate, t_max)
       write(*,*) "ham_to_vec", (t2-t1)/dble(t_rate)
       alpha(i) = dble(zdotc(dim,psi(1,i),1,Qk(:,1),1))
@@ -168,7 +169,7 @@ contains
       forall(j=1:NOK) cbeta(j) = cbeta(NOM) * ccoef(NOM,j)
       i = NOK+1
       call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,&
-        NOD,list_s,list_r,st_list,explist) 
+        NOD,list_s,list_r,explist) 
       calpha(i) = zdotc(dim,psi(1,i),1,Qk(1,1),1)
       do j=1, NOK
         call zaxpy(dim, -cbeta(j),psi(1,j),1,Qk(1,1),1)
@@ -183,7 +184,7 @@ contains
       do i = NOK+2, NOM
         call zscal( dim, (1.0d0,0.0d0)/cbeta(i-1), psi(1,i), 1 )
         call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,&
-          NOD,list_s,list_r,st_list,explist)
+          NOD,list_s,list_r,explist)
         calpha(i) = zdotc(dim,psi(1,i),1,Qk(:,1),1)
         !$OMP parallel do private(ell)
         do ell = 1, dim
@@ -225,7 +226,7 @@ contains
     print *, "Check accuracy <Phi|H|Phi>"
     do j=1, NOE
       call ham_to_vec_wave_vector(Qk(1:dim,j),psi(1:dim,j),dim,&
-        NOD,list_s,list_r,st_list,explist)
+        NOD,list_s,list_r,explist)
       prdct=(0.0d0,0.0d0)
       do i=1, dim
         prdct=prdct+conjg(psi(i,j))*Qk(i,j)
@@ -268,6 +269,7 @@ contains
   end subroutine lancz_eigen_val_complex
 
   subroutine fulldia_routines_with_momentum(THS,ham_complex,psi0,ene0)
+    use input_param, only : OUTDIR
 !!! Use blas_interfaces, Only: zscal
 !!! Use lapack_example_aux, Only: nagf_file_print_matrix_complex_gen
 !!! Use lapack_interfaces, Only: ddisna, zheev
@@ -336,7 +338,7 @@ contains
         print *, w(k)
       end do
 
-      open(111,file='output/full_eigenvalues.dat',position='append')
+      open(111,file=trim(adjustl(OUTDIR))//'full_eigenvalues.dat',position='append')
       do k=1, THS
         write(111,*) w(k)
       end do
@@ -383,7 +385,7 @@ contains
       print *, (zerrbd(i), i=1,THS)
 
 
-      open(112, file='work/full_eigenvectors.dat',position='append')
+      open(112, file=trim(adjustl(OUTDIR))//'full_eigenvectors.dat',position='append')
       do k=1, THS
         write(112,*) a(k,1)
       end do

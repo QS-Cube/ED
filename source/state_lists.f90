@@ -14,13 +14,13 @@ contains
     end do
   end subroutine get_combination
 
-  integer function f_combination(n,k) 
+  function f_combination(n,k) result(nCk)
     integer, intent(in) :: n, k
     integer :: i
     integer ::nCk
 
     if(n < k)then
-      f_combination = 0
+      nCk = 0
       return
     end if
 
@@ -30,7 +30,6 @@ contains
       nCk=nCk/i
     end do
 
-    f_combination = nCk
   end function f_combination
 
   !   !for Lx*Ly*Lz lattice (x=[1,LX], y=[1,Ly], z=[1,Lz]) <=> x + LX*(y-1) + LX*LY*(z-1)
@@ -223,170 +222,14 @@ contains
     end do
   end subroutine calcu_lm_trans
 
-  subroutine calcu_szsz_trans(NOD,psi_l,list_r_l,site1,site2,n0,pkx,pky,pkz,szsz_tmp) 
-    use input_param, only: LX,LY,LZ,shift_x_SQ,shift_y_SQ,shift_z_SQ
-    integer,intent(in)::NOD,site1,site2,n0(1:NOD)
-    complex(8),intent(in)::psi_l
-    real(8),intent(in)::list_r_l
-    real(8),intent(in)::pkx,pky,pkz
-    integer, allocatable :: n(:), np(:)
-    integer ::r_x, r_y, r_z, rp_x, rp_y, rp_z
-    integer::szsz_int
-    complex(8),intent(out)::szsz_tmp
-    logical ::f1, f2
-    real(8) :: p1, p2, c
-
-    allocate(n(1:NOD),np(1:NOD))
-
-    szsz_int=0
-    szsz_tmp=(0.0d0,0.0d0)
-    c = dble( conjg(psi_l)*psi_l*0.25d0/(list_r_l**2) )
-    n = n0 !n0 is |a>_l
-
-    do r_z = 1, LZ
-      n = shift_z_SQ(n)
-      do r_y = 1, LY
-        n = shift_y_SQ(n)
-        do r_x = 1, LX
-          n = shift_x_SQ(n)
-          call insertion_sort(n,NOD)
-          !We obtain now |b>=T^r|a>_l
-
-          !Look <S_site1^zS_site2^z> in |b> state
-          f1 = any(n(1:NOD)==site1)
-          f2 = any(n(1:NOD)==site2)
-          if(f1 .neqv. f2)then !up-down or down-up
-            szsz_int =  - 1 
-          else !up-up or down-down
-            szsz_int =  1
-          end if
-
-          !search T^r'|a>_l=|b>
-          np = n0
-          do rp_z=1,LZ
-            np = shift_z_SQ(np)
-            p1 = pkz*dble(rp_z-r_z)
-            do rp_y=1,LY
-              np = shift_y_SQ(np)
-              p2 = pky*dble(rp_y-r_y) + p1
-              do rp_x=1,LX
-                np = shift_x_SQ(np)
-                call insertion_sort(np,NOD)
-                !We obtain now T^r'|a>
-                if( all(n==np) )then
-                  szsz_tmp=szsz_tmp + c * dble(szsz_int) * &
-                    exp((0.0d0,1.0d0)*(pkx*dble(rp_x-r_x) + p2))
-                end if
-              end do
-            end do
-          end do
-
-        end do
-      end do
-    end do
-
-  end subroutine calcu_szsz_trans
-
-  subroutine calcu_spsm_trans(l,NOD,lv,psi,list_r,list_s,st_list,site1,site2,n0,pkx,pky,pkz,spsm_tmp) 
-    !(calculate <Si^+Sj^->=<SxSx>+<SySy>)                                                         
-    use input_param, only: LX,LY,LZ,shift_x_SQ,shift_y_SQ,shift_z_SQ
-    integer,intent(in)::l,lv
-    integer,intent(in)::NOD,site1,site2,n0(1:NOD) !lv=THS=dim
-    complex(8),intent(in)::psi(1:lv)
-    real(8),intent(in)::list_r(1:lv)
-    integer,intent(in)::list_s(1:lv)
-    integer, intent(in) :: st_list(1:NOD,1:lv)
-    real(8),intent(in)::pkx,pky,pkz
-    integer :: r_x, r_y, r_z, rp_x, rp_y, rp_z
-    complex(8),intent(out)::spsm_tmp
-    logical :: f1, f2
-    integer :: s,id
-    integer :: ell(3)
-    integer, allocatable :: n(:), np(:), ni(:),ni2(:)
-    real(8) :: p1, p2
-    complex(8) :: c
-
-    allocate(ni(NOD),ni2(NOD),n(NOD),np(NOD))
-
-    spsm_tmp=(0.0d0,0.0d0)
-    n = n0 !n0 is |a>_l
-
-    do r_z = 1, LZ
-      n = shift_z_SQ(n)
-
-      do r_y = 1, LY
-        n = shift_y_SQ(n)
-
-        do r_x = 1, LX
-          n = shift_x_SQ(n)
-          call insertion_sort(n,NOD)
-          id=0
-          f1 = any(n(1:NOD)==site1) !S+
-          f2 = any(n(1:NOD)==site2) !S-
-
-          if(site1 /= site2)then  
-            if(f1 .and. (.not. f2))then 
-              !down-up state or up-down (we will calculate <Si^+Sj^->=<SxSx>+<SySy>)
-              ni(1:NOD) = j_flip_ni(site1,site2,n(1:NOD),NOD) !flip site1, site2-spins
-              ni2(1:NOD)=ni(1:NOD)
-              !
-              !We set ni2l here just for knowing "id". (ell will not used later)
-              call representative_SQ(NOD,s,ell,ni2) 
-              !Here, ni2 is changed to representative state |a>_id, that means ni2 is "not" |b>.
-              call findstate(s,list_s,id,lv)
-              if(id>0)then
-                c = conjg(psi(id))*psi(l)/list_r(l)/list_r(id)
-                ! We obtain now |b>=SpSmT^r|a>_l. Note that this |b> state belongs to 
-                ! |a>_id (l/=id). |b>=T^[-ell(1),-ell(2)] |a>_id
-                call insertion_sort(ni,NOD)
-
-                !search T^r'|a>_id=|b>
-                np = st_list(1:NOD,id)!n0(1:NOD)
-                do rp_z=1, LZ
-                  np = shift_z_SQ(np)
-                  p1 = pkz*dble(rp_z-r_z)
-                  do rp_y=1,LY
-                    np = shift_y_SQ(np)
-                    p2 = pky*dble(rp_y-r_y) + p1
-                    do rp_x=1,LX
-                      np = shift_x_SQ(np)
-                      call insertion_sort(np,NOD)
-                      !We obtain now T^r'|a>
-                      if( all(ni==np) )then
-                        spsm_tmp=spsm_tmp + c * exp((0.0d0,1.0d0)*(pkx*dble(rp_x-r_x) + p2))
-                      end if
-                    end do
-                  end do
-                end do
-
-              end if
-            end if
-
-          else if(site1 == site2)then
-            ! site1=site2 and this site has up spin !2020/7/30-memo(We will not calculate, being zero)
-            !   ni(1:NOD)=n(1:NOD)
-            ! call representative_SQ(NOD,s,ell,ni)
-            ! call findstate(s,list_s,id,lv)
-            ! if(id>0)then
-            !  spsm_tmp=spsm_tmp+exp((0.0d0,-1.0d0)*(pkx*dble(ell(1)+i) + pky*dble(ell(2)+j)))* &
-            ! & conjg(psi(id))*psi(i8)/list_r(id)/list_r(i8)
-            ! end if
-          end if
-
-        end do
-      end do
-    end do
-
-  end subroutine calcu_spsm_trans
-
   subroutine allocate_lists_omp_SQ 
-    use input_param, only: NOD,rkx,rky,rkz,THS,NOS,list_s,list_r,st_list
+    use input_param, only: NOD,rkx,rky,rkz,THS,NOS,list_s,list_r
     use omp_lib
     integer :: a, i, j
     real(8) :: r
     integer :: num = 1
     real(8), allocatable :: tmp_list_r(:)
-    integer, allocatable :: tmp_st_list(:,:), order(:)
+    integer, allocatable :: order(:)
     num = omp_get_max_threads()
     write(*,*) "********************"
     write(*,*) "max_threads", num
@@ -409,7 +252,7 @@ contains
     !$omp end parallel
     !
     write(*,'(" ### Allocate work arrays for lists. ")')
-    allocate(list_s(a),tmp_list_r(a),tmp_st_list(NOD,a))
+    allocate(list_s(a),tmp_list_r(a))
     !
     write(*,'(" ### Store representative states. ")')
     a = 0
@@ -423,7 +266,6 @@ contains
           a = a + 1
           list_s(a) = i
           tmp_list_r(a) = r
-          tmp_st_list(:,a) = list_fly(i,NOD,NOS)
           !$omp end critical
         end if
       end do
@@ -433,7 +275,7 @@ contains
     !
     write(*,'(" ### Allocate arrays for lists. ")')
     THS = a
-    allocate(order(THS),list_r(THS),st_list(NOD,THS))
+    allocate(order(THS),list_r(THS))
     !
     write(*,'(" ### Store reordered lists. ")')
     !$omp parallel do
@@ -441,36 +283,52 @@ contains
       order(i) = i
     end do
     call qsort_w_order(list_s, order, 1, THS)
-    !$omp parallel do private(i)
+    !$omp parallel do
     do i = 1, THS
       list_r(i) = sqrt( tmp_list_r(order(i)) )
-      st_list(:,i) = tmp_st_list(:,order(i))
     end do
-    !$omp end parallel do 
+    !
     return
   end subroutine allocate_lists_omp_SQ
 
   function list_fly(t,NOD,NOS) result(ni)
     integer, intent(in) :: t, NOD, NOS
-    integer :: s, q
-    integer :: i, j
+    integer :: s
+    integer :: i, j, b, j0
     integer :: ni(NOD) 
     s = t
     j = NOS - 1
     do i = NOD, 2, -1
-      do
-        q = combination(j,i)
-        if(q >= s)then
-          j = j-1
-        else
-          ni(i) = j+1
-          s = s - q
-          exit
-        end if
-      end do
+       call binary_search(s,combination(:,i), i, j, b, j0)
+       j = j0 - 1
+       ni(i) = j0
+       s = s - combination(j,i)
     end do
     ni(1) = s
   end function list_fly
+  !                                                                                                                                                                                                                
+  subroutine binary_search(s,list_s,ls,le,b,bmin)
+    integer, intent(out) :: b, bmin
+    integer, intent(in) :: s,ls,le
+    integer, intent(in) :: list_s(le)
+    integer :: bmax
+    bmin = ls; bmax = le
+    do
+       b = bmin + (bmax-bmin)/2
+       if(s<list_s(b))then
+          bmax = b-1
+       else if(list_s(b)<s)then
+          bmin = b+1
+       else
+          bmin = b
+          return
+       end if
+       if(bmin>bmax)then
+          b = -1
+          return
+       end if
+    end do
+  end subroutine binary_search
 
   function j_flip_ni(i,j,n,NOD) result(nd)
     integer, intent(in) :: NOD, i, j, n(NOD)
@@ -558,17 +416,20 @@ contains
   end subroutine representative_SQ
   !
   subroutine allocate_lists_omp_SQ_new 
-    use input_param, only: list_s_new,list_r_new,st_list_new,NOD_new,THS_new,NOS,&
+    use input_param, only: list_s_new,list_r_new,NOD_new,THS_new,NOS,&
       rkx_new,rky_new,rkz_new
-    !$use omp_lib
-    integer :: i, dim, a
+    use omp_lib
+    integer :: i, j, a
     real(8) :: r
-    integer :: num = 1, j
+    integer :: num = 1
     real(8), allocatable :: tmp_list_r(:)
-    integer, allocatable :: tmp_st_list(:,:), order(:)
-    integer ::THS0 
-    !$num = omp_get_max_threads()
-
+    integer, allocatable :: order(:)
+    num = omp_get_max_threads()
+    write(*,*) "********************"
+    write(*,*) "max_threads", num
+    write(*,*) "********************"
+    !
+    write(*,'(" ### Count # of representative states. ")')
     a = 0
     !$omp parallel
     !$omp do private(j,i,r)
@@ -576,16 +437,18 @@ contains
       do i = j, THS_new, num
         call checkstate_SQ(i,r,NOD_new,rkx_new,rky_new,rkz_new)
         if(r>1.0d-15) then
-          !$omp critical
+          !$omp atomic
           a = a + 1
-          !$omp end critical
+          !
         end if
       end do
     end do
     !$omp end do
     !$omp end parallel
-    dim = a           !update dim 
-    allocate(list_s_new(dim),tmp_list_r(dim),tmp_st_list(NOD_new,dim))
+    write(*,'(" ### Allocate work arrays for lists_new. ")')
+    allocate(list_s_new(a),tmp_list_r(a))
+    !
+    write(*,'(" ### Store representative states_new. ")')
     a = 0
     !$omp parallel
     !$omp do private(j,i,r)
@@ -595,33 +458,32 @@ contains
         if(r>1.0d-15) then
           !$omp critical
           a = a + 1
-          if(a > dim) stop "dim is too small!"
           list_s_new(a) = i
           tmp_list_r(a) = r
-          tmp_st_list(:,a) = list_fly(i,NOD_new,NOS)
           !$omp end critical
         end if
       end do
     end do
     !$omp end do
     !$omp end parallel
-    THS_new = a             !update THS_new
-    allocate(order(THS_new),list_r_new(THS_new),st_list_new(NOD_new,THS_new))
+    !
+    write(*,'(" ### Allocate arrays for lists_new. ")')
+    THS_new = a
+    allocate(order(THS_new),list_r_new(THS_new))
+    !
+    write(*,'(" ### Store reordered lists_new. ")')
     !$omp parallel do
     do i = 1, THS_new
       order(i) = i
     end do
-    THS0=THS_new
-    call qsort_w_order(list_s_new, order, 1, THS0)       
+    call qsort_w_order(list_s_new, order, 1, THS_new)       
     !$omp parallel do
     do i = 1, THS_new
       list_r_new(i) = sqrt( tmp_list_r(order(i)) )
-      st_list_new(:,i) = tmp_st_list(:,order(i))
     end do
     !
     return
   end subroutine allocate_lists_omp_SQ_new
-
 
   subroutine search_representative_Spi_state_SQ(i,NOD,NOD_new,dim_new,list_s_new,n,lp,ell) 
     integer,intent(in)::i,NOD,NOD_new 

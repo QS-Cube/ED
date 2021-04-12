@@ -11,7 +11,7 @@ contains
   end subroutine read_lanczos_para
   !
   subroutine lanczos_routines(ene,THS,psi)
-    use input_param, only: NOD, list_s, list_r, st_list, explist 
+    use input_param, only: NOD, list_s, list_r, explist 
     real(8), allocatable, intent(out) :: ene(:)
     integer, intent(in) :: THS
     complex(8), allocatable, intent(out) :: psi(:,:)
@@ -34,8 +34,8 @@ contains
     write(*,'("************************************************************************************")')
     !check_wave_vector
     allocate(xpsi(dim,2))
-    call ham_to_vec_wave_vector(xpsi(:,1),psi(:,1),dim,NOD,list_s,list_r,st_list,explist) 
-    call ham_to_vec_wave_vector(xpsi(:,2),xpsi(:,1),dim,NOD,list_s,list_r,st_list,explist) 
+    call ham_to_vec_wave_vector(xpsi(:,1),psi(:,1),dim,NOD,list_s,list_r,explist) 
+    call ham_to_vec_wave_vector(xpsi(:,2),xpsi(:,1),dim,NOD,list_s,list_r,explist) 
     alpha(1) = dble(zdotc(dim,psi(1,1),1,xpsi(1,1),1))
     alpha(2) = dble(zdotc(dim,psi(1,1),1,xpsi(1,2),1))
     write(*,'("************************************************************************************")')
@@ -47,7 +47,7 @@ contains
   end subroutine lanczos_routines
   !
   subroutine lancz_eigen_val(ene,psi_io)
-    use input_param, only: NOD, list_s, list_r, st_list, explist 
+    use input_param, only: NOD, list_s, list_r, explist 
     real(8), intent(out) :: ene
     complex(8), intent(out) :: psi_io(dim)
     complex(8), allocatable :: psi(:,:)
@@ -71,7 +71,7 @@ contains
     tmp = 0.0d0
     mitr= min(maxitr,dim)
     do i = 1, mitr
-      call ham_to_vec_wave_vector(psi(:,2),psi(:,1),dim,NOD,list_s,list_r,st_list,explist) 
+      call ham_to_vec_wave_vector(psi(:,2),psi(:,1),dim,NOD,list_s,list_r,explist) 
       alpha(i) = dble(zdotc(dim,psi(1,1),1,psi(1,2),1))
       if(i > 1)then
         !$omp parallel do
@@ -121,7 +121,7 @@ contains
     call zdscal(dim, z(1,1), psi_io, 1)
     tmp = 0.0d0
     do i = 1, ite_lancz-1
-      call ham_to_vec_wave_vector(psi(:,2),psi(:,1),dim,NOD,list_s,list_r,st_list,explist) 
+      call ham_to_vec_wave_vector(psi(:,2),psi(:,1),dim,NOD,list_s,list_r,explist) 
       if(i > 1)then
         !$omp parallel do
         do ell = 1, dim

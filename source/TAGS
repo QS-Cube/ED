@@ -9,54 +9,61 @@ eigen_solver.f90,376
   subroutine fulldia_routines_with_momentum(270,9478
   subroutine calcu_FM_energy(409,13727
 
-get_expectation_values.f90,239
-  subroutine allocate_expe_mem(9,262
-  subroutine get_lm_wave_vector(41,1306
-  subroutine get_cf_wave_vector(83,2591
-  subroutine calcu_Sq_a(157,5096
-  subroutine calcu_DSF_wavevector(243,8203
-  subroutine printProgressBar(450,15943
+get_expectation_values.f90,438
+  subroutine allocate_expe_mem(10,290
+  subroutine representative_lm(39,1194
+  subroutine mk_list_n(64,1768
+  subroutine mk_list_ij(96,2477
+  subroutine representative_szsz(131,3310
+  subroutine representative_spsm(165,4185
+  subroutine get_lm_2_wave_vector(195,4899
+  subroutine get_cf_2_wave_vector(235,6009
+  subroutine calcu_Sq_a(287,7672
+  subroutine calcu_DSF_wavevector(373,10779
+  subroutine printProgressBar(582,18598
 
-ham2vec_v3.f90,86
+ham2vec_v3.f90,165
   subroutine make_full_hamiltonian(5,41
-  subroutine ham_to_vec_wave_vector(42,1269
+  subroutine ham_to_vec_wave_vector(43,1319
+  subroutine calcu_lm_trans_2(84,2877
+  subroutine calcu_cf_trans_2(120,3852
 
 input_param.f90,92
-  subroutine read_ip57,2480
-  subroutine write_wf(113,4344
-  subroutine read_wf(143,5371
+  subroutine read_ip56,2479
+  subroutine write_wf(115,4475
+  subroutine read_wf(145,5502
 
 lanczos.f90,113
   subroutine read_lanczos_para8,194
   subroutine lanczos_routines(13,313
-  subroutine lancz_eigen_val(49,2157
+  subroutine lancz_eigen_val(49,2132
 
 mk_input_list.f90,85
   subroutine bond_x23,564
   subroutine bond_y39,879
   subroutine bond_diag51,1149
 
-state_lists.f90,871
+state_lists.f90,852
   subroutine get_combination(6,88
-  integer function f_combination(17,359
-  function mk_shift_x_SQ(37,750
-  function mk_shift_y_SQ(47,1078
-  function mk_shift_z_SQ(57,1398
-  subroutine checkstate_SQ(67,1718
-  pure subroutine insertion_sort(116,3019
-  integer function inv_list(132,3373
-  recursive subroutine qsort_w_order(142,3624
-  subroutine calcu_lm_trans(166,4229
-  subroutine calcu_szsz_trans(226,5943
-  subroutine calcu_spsm_trans(290,7806
-  subroutine allocate_lists_omp_SQ 382,11187
-  function list_fly(453,13113
-  function j_flip_ni(475,13533
-  subroutine findstate(506,14208
-  subroutine representative_SQ(526,14644
-  subroutine allocate_lists_omp_SQ_new 560,15512
-  subroutine search_representative_Spi_state_SQ(626,17349
-  subroutine search_representative_Smi_state_SQ(663,18515
-  subroutine search_representative_Szi_state_SQ(711,19828
+  function f_combination(17,359
+  function f_combination_8(35,629
+  function mk_shift_x_SQ(54,1022
+  function mk_shift_y_SQ(64,1350
+  function mk_shift_z_SQ(74,1670
+  subroutine checkstate_SQ(84,1990
+  pure subroutine insertion_sort(133,3291
+  integer function inv_list(149,3645
+  recursive subroutine qsort_w_order(159,3896
+  subroutine calcu_lm_trans(183,4501
+  subroutine allocate_lists_omp_SQ 243,6215
+  function list_fly(312,7953
+  subroutine binary_search(328,8538
+  function j_flip_ni(351,9060
+  subroutine findstate(382,9735
+  subroutine representative_SQ(402,10171
+  subroutine allocate_lists_omp_SQ_new 436,11039
+  subroutine search_representative_Spi_state_SQ(508,13116
+  subroutine search_representative_Smi_state_SQ(545,14282
+  subroutine search_representative_Szi_state_SQ(593,15595
 
 main.f90,0
