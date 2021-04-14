@@ -33,7 +33,7 @@ If you have your Git account, please clone this repository on your local compute
 
 $ git clone https://github.com/QS-Cube/ED.git
 
-If you do not have, please push "Code" button and "Download ZIP" on this web page and get "ED-main.zip" and unpacking the zip: 
+If you do not have, please push "Code" button and "Download ZIP" on this web page and get "ED-main.zip" and unpack the zip: 
 
 $ unzip ED-main.zip <br>
 $ cd ED-main
