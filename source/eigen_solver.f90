@@ -1,7 +1,7 @@
 module eigen_solver
   use ham2vec
   implicit none
-  integer :: NOE,NOK, NOM, maxitr, ite_lancz, i_vec_min, i_vec_max  
+  integer :: NOE,NOK, NOM, maxitr, ite_lancz, i_vec_min, i_vec_max
   integer :: dim
   real(8) :: lnc_ene_conv
   namelist /input_TRLan/ NOE, NOK, NOM, maxitr, lnc_ene_conv, i_vec_min, i_vec_max
@@ -100,7 +100,7 @@ contains
       call system_clock(t1)
       call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,NOD,list_s,list_r,explist) 
       call system_clock(t2,t_rate, t_max)
-      write(*,*) "ham_to_vec", (t2-t1)/dble(t_rate)
+      !write(*,*) "ham_to_vec", (t2-t1)/dble(t_rate)
       alpha(i) = dble(zdotc(dim,psi(1,i),1,Qk(:,1),1))
       if(i > 1)then
         !$OMP parallel do private(ell)
@@ -131,10 +131,10 @@ contains
     deallocate(iwork_lanc, ifail_lanc, rwork_lanc)
     allocate(ifail_lanc(2*NOM))
     !
-    print *, "First lanczos step over"
-    do i=1,NOM
-      print *, i, ene(i)
-    end do
+    !print *, "First lanczos step over"
+    !do i=1,NOM
+    !  print *, i, ene(i)
+    !end do
     !
     !*********************************
     !***** restart lanczos step ******
@@ -211,13 +211,13 @@ contains
         write(*,*) "error in dxyevr in eigen_solver.f90. info =", info; stop 4
       end if
 
-      print *, "Temporal energy", "  tritr=", tritr
-      do j=1, NOE
-        print *, j, ene(j)
-      end do
+      !print *, "Temporal energy", "  tritr=", tritr
+      !do j=1, NOE
+      !  print *, j, ene(j)
+      !end do
 
       call system_clock(t4,t_rate, t_max)
-      write(*,*) "time for 1 iteration", (t4-t3)/dble(t_rate), "sec"
+      !write(*,*) "time for 1 iteration", (t4-t3)/dble(t_rate), "sec"
 
     end do
     ite_lancz = tritr*NOM
@@ -278,7 +278,7 @@ contains
     real(8),intent(inout)::ene0(THS)
     complex(8),intent(in)::ham_complex(THS,THS)
     complex(8),intent(inout)::psi0(THS,THS)
-    complex(8), allocatable ::v0(:), v1(:)
+    !complex(8), allocatable ::v0(:), v1(:)
     integer :: k
     !LAPACK
     !integer :: nin, nout, ifail, j
@@ -301,7 +301,7 @@ contains
     n=THS
     nmax=THS
     lda=nmax
-    allocate(v0(1:THS), v1(1:THS))
+    !allocate(v0(1:THS), v1(1:THS))
     allocate(a(lda,nmax))
     allocate(rcondz(nmax))
     allocate(w(nmax))
@@ -315,7 +315,7 @@ contains
 
     !     Use routine workspace query to get optimal workspace.
     lwork = -1
-    Call zheev('Vectors', 'Upper', n, a, lda, w, dummy, lwork, rwork, info)
+    Call zheev('V', 'U', n, a, lda, w, dummy, lwork, rwork, info)
 
     !     Make sure that there is enough workspace for block size nb.
     lwork = max((nb+1)*n, nint(real(dummy(1))))
@@ -323,7 +323,7 @@ contains
 
     !     Solve the Hermitian eigenvalue problem
     a=ham_complex
-    Call zheev('Vectors', 'Upper', n, a, lda, w, work, lwork, rwork, info)
+    Call zheev('V', 'U', n, a, lda, w, work, lwork, rwork, info)
 
     lwkopt = nint(dble(work(1)))
     if(info>0)then
@@ -332,57 +332,56 @@ contains
     end if
 
     if(info==0)then
-      print *, "           "
+      !print *, "           "
       print *, "Eigenvalues by Full Diagonalization"
-      do k=1, THS
-        print *, w(k)
-      end do
-
+      !do k=1, THS
+      !  print *, w(k)
+      !end do
       open(111,file=trim(adjustl(OUTDIR))//'full_eigenvalues.dat',position='append')
       do k=1, THS
-        write(111,*) w(k)
+        write(111,'(es23.15)') w(k)
       end do
       close(111)
 
-      ene0(THS)=w(THS) !2020/7/28-add
+      ene0(1:THS)=w(1:THS) !2020/7/28-add
 
-      !       Normalize the eigenvectors so that the element of largest absolute
-      !       value is real.
-      do i = 1, n
-        rwork(1:n) = abs(a(1:n,i))
-        k = maxloc(rwork(1:n), 1)
-        call zscal(n, conjg(a(k,i))/abs(a(k,i)), a(1,i), 1)
-      end do
+      ! !       Normalize the eigenvectors so that the element of largest absolute
+      ! !       value is real.
+      ! do i = 1, n
+      !   rwork(1:n) = abs(a(1:n,i))
+      !   k = maxloc(rwork(1:n), 1)
+      !   call zscal(n, conjg(a(k,i))/abs(a(k,i)), a(1,i), 1)
+      ! end do
 
-      !       ifail: behaviour on error exit
-      !              =0 for hard exit, =1 for quiet-soft, =-1 for noisy-soft
-      !!ifail = 0
-      !call nagf_file_print_matrix_complex_gen('General', ' ', n, n, a, lda, &
-      !  'Eigenvectors', ifail)
-      !call x04daf('General', ' ', n, n, a, lda, 'Eigenvectors', ifail)
+      ! !       ifail: behaviour on error exit
+      ! !              =0 for hard exit, =1 for quiet-soft, =-1 for noisy-soft
+      ! !!ifail = 0
+      ! !call nagf_file_print_matrix_complex_gen('General', ' ', n, n, a, lda, &
+      ! !  'Eigenvectors', ifail)
+      ! !call x04daf('General', ' ', n, n, a, lda, 'Eigenvectors', ifail)
 
-      !       Get the machine precision, EPS and compute the approximate
-      !       error bound for the computed eigenvalues.  Note that for
-      !       the 2-norm, max( abs(W(i)) ) = norm(A), and since the
-      !       eigenvalues are returned in descending order
-      !       max( abs(W(i)) ) = max( abs(W(1)), abs(W(n)))
+      ! !       Get the machine precision, EPS and compute the approximate
+      ! !       error bound for the computed eigenvalues.  Note that for
+      ! !       the 2-norm, max( abs(W(i)) ) = norm(A), and since the
+      ! !       eigenvalues are returned in descending order
+      ! !       max( abs(W(i)) ) = max( abs(W(1)), abs(W(n)))
 
-      eps = epsilon(1.0d0)
-      eerrbd = eps*max(abs(w(1)), abs(w(n)))
+      ! eps = epsilon(1.0d0)
+      ! eerrbd = eps*max(abs(w(1)), abs(w(n)))
 
-      !       Call DDISNA to estimate reciprocal condition
-      !       numbers for the eigenvectors
-      call ddisna('Eigenvectors', n, n, w, rcondz, info)
+      ! !       Call DDISNA to estimate reciprocal condition
+      ! !       numbers for the eigenvectors
+      ! call ddisna('Eigenvectors', n, n, w, rcondz, info)
 
-      !       Compute the error estimates for the eigenvectors
-      do i = 1, n
-        zerrbd(i) = eerrbd/rcondz(i)
-      end Do
+      ! !       Compute the error estimates for the eigenvectors
+      ! do i = 1, n
+      !   zerrbd(i) = eerrbd/rcondz(i)
+      ! end Do
 
-      print *, 'Error estimate for the eigenvalues'
-      print *, eerrbd
-      print *, "Error estimates for the eigenvectors"
-      print *, (zerrbd(i), i=1,THS)
+      ! print *, 'Error estimate for the eigenvalues'
+      ! print *, eerrbd
+      ! print *, "Error estimates for the eigenvectors"
+      ! print *, (zerrbd(i), i=1,THS)
 
 
       open(112, file=trim(adjustl(OUTDIR))//'full_eigenvectors.dat',position='append')
@@ -391,20 +390,20 @@ contains
       end do
       close(112)
 
-      psi0 = a(1:THS,1:THS) 
+      psi0(1:THS,1:THS)  = a(1:THS,1:THS) 
 
     else 
       print *, "Failure in ZHEEV. INFO =", info
     end if
 
     !check the acuracy by <v|H|v>-E
-    print *, "check the acuracy"
-    do k=1, THS
-      v0 = a(1:THS,k)
-      v1 = 0.0d0
-      !calcu H|v0> -> v1
-      call zgemv('n',THS,THS,1.0d0,ham_complex,THS,v0,1,0.0d0,v1,1) 
-    end do
+    !print *, "check the acuracy"
+    !do k=1, THS
+    !  v0 = a(1:THS,k)
+    !  v1 = 0.0d0
+    !  !calcu H|v0> -> v1
+    !  call zgemv('n',THS,THS,1.0d0,ham_complex,THS,v0,1,0.0d0,v1,1) 
+    !end do
 
   end subroutine fulldia_routines_with_momentum
 

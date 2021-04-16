@@ -203,9 +203,8 @@ contains
     integer :: non, list_n(NOS), no_tot
     !
     expe_sz=0.0d0    
-    no_tot = 0
-
     do k = 1, nvec
+      no_tot = 0
       do j = 1, NOS
         if(no_tot == NOS)then
           !call printProgressBar(NOS+(k-1)*NOS,NOS*nvec)
@@ -226,7 +225,7 @@ contains
     write(*,'(" ### write ouput/local_mag.dat. ")')
     open(10,file=trim(adjustl(OUTDIR))//'local_mag.dat',position='append')
     do j = 1, NOS
-      write(10,'(i8,100es25.15)') j, ( expe_sz(j,k), k=1, nvec )
+      write(10,'(i8,10000es23.15)') j, ( expe_sz(j,k), k=1, nvec )
     end do
     close(10)
 
@@ -245,12 +244,12 @@ contains
     integer :: j, k
     integer :: jmax, list_ij(2,NOS), noij, no_tot
 
+    jmax=NOS**2
     expe_szsz=0.0d0
     expe_spsm=0.0d0
-    jmax=NOS**2
-    no_tot=0
 
     do k = 1, nvec
+      no_tot=0
       do j = 1, jmax
         if(no_tot==jmax) exit
         call mk_list_ij(list_ij,noij,NOS,list_expe_ss(:,j))
@@ -259,7 +258,7 @@ contains
         else
           no_tot = no_tot + noij
           call calcu_cf_trans_2(psi(1,k),dim,NOD,list_s,list_r,explist,NOS,list_ij,noij,&
-            expe_szsz,expe_spsm)
+            expe_szsz(1,k),expe_spsm(1,k))
         end if
       end do
     end do
@@ -267,14 +266,14 @@ contains
     write(*,'(" ### write ouput/SzSz-corr.dat. ")')
     open(10,file=trim(adjustl(OUTDIR))//'SzSz-corr.dat',position='append')
     do j = 1, NOCF
-      write(10,'(2i8,100es25.15)') list_expe_ss(2,j), list_expe_ss(1,j), ( expe_szsz(j,k), k=1, nvec )
+      write(10,'(2i8,10000es25.15)') list_expe_ss(2,j), list_expe_ss(1,j), ( expe_szsz(j,k), k=1, nvec )
     end do
     close(10)    
 
     write(*,'(" ### write ouput/SpSm-corr.dat. ")')
     open(10,file=trim(adjustl(OUTDIR))//'SpSm-corr.dat',position='append')
     do j = 1, NOCF
-      write(10,'(2i8,100es25.15)') list_expe_ss(2,j), list_expe_ss(1,j), ( expe_spsm(j,k), k=1, nvec )
+      write(10,'(2i8,10000es25.15)') list_expe_ss(2,j), list_expe_ss(1,j), ( expe_spsm(j,k), k=1, nvec )
     end do
     close(10)
 
