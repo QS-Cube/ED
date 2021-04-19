@@ -44,7 +44,7 @@ module input_param
 
   !
   namelist /input_parameters/ NOS, NOD, LX,LY,LZ,KX,KY,KZ,NOxxz, &
-    &          ALG, cal_lm, cal_cf, cal_dsf, wr_wf, re_wf, FILExxz, FILEwf, OUTDIR
+    ALG, cal_lm, cal_cf, cal_dsf, wr_wf, re_wf, FILExxz, FILEwf, OUTDIR
 
   namelist /input_static/ NOV, NOLM, NOCF, FILElm, FILECF
 

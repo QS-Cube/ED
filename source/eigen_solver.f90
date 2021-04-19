@@ -345,45 +345,6 @@ contains
 
       ene0(1:THS)=w(1:THS) !2020/7/28-add
 
-      ! !       Normalize the eigenvectors so that the element of largest absolute
-      ! !       value is real.
-      ! do i = 1, n
-      !   rwork(1:n) = abs(a(1:n,i))
-      !   k = maxloc(rwork(1:n), 1)
-      !   call zscal(n, conjg(a(k,i))/abs(a(k,i)), a(1,i), 1)
-      ! end do
-
-      ! !       ifail: behaviour on error exit
-      ! !              =0 for hard exit, =1 for quiet-soft, =-1 for noisy-soft
-      ! !!ifail = 0
-      ! !call nagf_file_print_matrix_complex_gen('General', ' ', n, n, a, lda, &
-      ! !  'Eigenvectors', ifail)
-      ! !call x04daf('General', ' ', n, n, a, lda, 'Eigenvectors', ifail)
-
-      ! !       Get the machine precision, EPS and compute the approximate
-      ! !       error bound for the computed eigenvalues.  Note that for
-      ! !       the 2-norm, max( abs(W(i)) ) = norm(A), and since the
-      ! !       eigenvalues are returned in descending order
-      ! !       max( abs(W(i)) ) = max( abs(W(1)), abs(W(n)))
-
-      ! eps = epsilon(1.0d0)
-      ! eerrbd = eps*max(abs(w(1)), abs(w(n)))
-
-      ! !       Call DDISNA to estimate reciprocal condition
-      ! !       numbers for the eigenvectors
-      ! call ddisna('Eigenvectors', n, n, w, rcondz, info)
-
-      ! !       Compute the error estimates for the eigenvectors
-      ! do i = 1, n
-      !   zerrbd(i) = eerrbd/rcondz(i)
-      ! end Do
-
-      ! print *, 'Error estimate for the eigenvalues'
-      ! print *, eerrbd
-      ! print *, "Error estimates for the eigenvectors"
-      ! print *, (zerrbd(i), i=1,THS)
-
-
       open(112, file=trim(adjustl(OUTDIR))//'full_eigenvectors.dat',position='append')
       do k=1, THS
         write(112,*) a(k,1)

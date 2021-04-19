@@ -1,12 +1,3 @@
-!******************************************************************************************************
-! 2020/12/23 coded by Hiroshi Ueda (Osaka Univ.) & Tokuro Shimokawa (OIST)
-!    This numerical program can be applied to S=1/2 XXZ spin systems 
-! on regular lattices near saturation.
-!
-! 2021/01/02 major update of get_lm_2_wave_vector, get_cf_2_wave_vector, and their branches.
-! 2021/01/03 major update of list_fly and do not use st_list & st_list_new
-!
-!******************************************************************************************************
 program main
   !$ use omp_lib
   use state_lists, only: get_combination,combination,mk_shift_x_SQ, mk_shift_y_SQ, mk_shift_z_SQ &

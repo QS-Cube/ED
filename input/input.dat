@@ -8,7 +8,7 @@ KX     = 0,
 KY     = 0,
 KZ     = 0,
 NOxxz  = 72,
-ALG=3,
+ALG = 2,
 cal_lm = 1,
 cal_cf = 1,
 cal_dsf= 1,
@@ -28,7 +28,7 @@ FILECF = "input/list_cf_ss.dat",
 &end
 
 &input_dynamic
-spsmsz = 1,
+spsmsz = 3,
 itr_dsf= 200,
 qx     = 0.0d0,
 qy     = 0.0d0,
