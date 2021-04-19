@@ -25,7 +25,7 @@ Spin <i>S</i> = 1/2 systems with the U(1) and translational symmetries.
 # Requirements
 
 This package includes the Fortran source codes, samples, and manual. 
-Intel Fortran compiler (ver. XX or later) + MKL libraries or gfrotran + LAPACK (ver. YY or later) + BLAS (ver. ZZ or later) are prerequisites.
+A Fortran compiler and BLAS/LAPACK are prerequisites.
 
 # Compile
 
@@ -38,7 +38,7 @@ If you do not have, please push "Code" button and "Download ZIP" on this web pag
 $ unzip ED-main.zip <br>
 $ cd ED-main
 
-A simple Makefile is prepared to build the executable file "QS3.exe", and the following procedures after the cloning/downloading will give the executable and execute sample programs
+A simple Makefile is prepared to build the executable files, and you set the pase of BLAS/LAPACK or MKL written in "source*/Makefile". Then, following procedures after the cloning/downloading will give the executable and execute sample programs
 
 $ cd script <br>
 $ ./make.sh <br>
