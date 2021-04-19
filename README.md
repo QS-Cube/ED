@@ -38,7 +38,7 @@ If you do not have, please push "Code" button and "Download ZIP" on this web pag
 $ unzip ED-main.zip <br>
 $ cd ED-main
 
-A simple Makefile is prepared to build the executable files, and you set the pase of BLAS/LAPACK or MKL written in "source*/Makefile". Then, following procedures after the cloning/downloading will give the executable and execute sample programs
+A simple Makefile is prepared to build the executable files, and you should change the pase of BLAS/LAPACK or MKL written in "source*/Makefile". Then, following procedures after the cloning/downloading will give the executable and execute sample programs
 
 $ cd script <br>
 $ ./make.sh <br>
