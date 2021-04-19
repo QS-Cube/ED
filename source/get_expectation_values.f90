@@ -207,10 +207,7 @@ contains
       no_tot = 0
       do j = 1, NOS
         if(no_tot == NOS)then
-          !call printProgressBar(NOS+(k-1)*NOS,NOS*nvec)
           exit
-        !else if(mod(j+(k-1)*NOS,max(1,(NOS*nvec)/100))==0)then
-          !call printProgressBar(j+(k-1)*NOS,NOS*nvec)
         end if
         call mk_list_n(list_n,non,NOS,j)
         if(non==0)then
@@ -367,8 +364,6 @@ contains
           if(lp>0)then
             fn(lp)=fn(lp)+ Siz*psi(l)*list_r_new(lp)/list_r(l) &
               * exp_list_KS(i) * conjg( explist_new(ell(1),ell(2),ell(3)) )
-            !exp((0.0d0,-1.0d0)*(dot_product(kvec_calc(1:3),Spos(1:3,i))))* &
-            !exp((0.0d0,-1.0d0)*(rkx_new*dble(ell(1))+rky_new*dble(ell(2))+rkz_new*dble(ell(3))))
           end if
         end do
         !$omp end parallel do
@@ -592,24 +587,5 @@ contains
     close(162)
     !
   end subroutine calcu_DSF_wavevector
-  !
-  subroutine printProgressBar(loopindex,loopmax)
-    implicit none
-    integer,parameter::ndigit=50
-    integer loopindex,loopmax
-    integer j
-    write(*,'(a)', advance="no") ' ['
-    do j=1,loopindex*ndigit/loopmax
-      write(*,'(a)', advance="no") '='
-    enddo
-    write(*,'(a)', advance="no") '>'
-    do j=loopindex*ndigit/loopmax+1,ndigit
-      write(*,'(a)', advance="no") ' '
-    enddo
-    write(*,'(a)', advance="no") ']'
-    write(*,'(f6.1,a,a)', advance="no") 100d0*loopindex/loopmax,'%',char(13)
-    ! Finalize
-    if(loopindex.eq.loopmax) write(*,*) 'Finish!'
-  end subroutine printProgressBar
   !
 end module get_expectation_values

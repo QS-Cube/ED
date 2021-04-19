@@ -177,9 +177,8 @@ contains
   end subroutine calcu_Sq_a
 
   subroutine calcu_DSF_wavevector(psi,ene,kvec_calc,rfield,NOS,NOD,itr_dsf,dim) 
-    use input_param, only: NOD_new,THS_new,spsmsz,OUTDIR !LX,LY,LZ,qx,qy,qz,rkx,rky,rkz,rkx_new,rky_new,rkz_new,
-  !     list_s_new,list_r_new,explist_new,
-    use state_lists, only: combination !,allocate_lists_omp_SQ_new
+    use input_param, only: NOD_new,THS_new,spsmsz,OUTDIR
+    use state_lists, only: combination
     use ham2vec, only:  ham_to_vec_wave_vector
     integer, intent(in) :: dim
     complex(8), intent(in) :: psi(1:dim,1)
@@ -374,24 +373,5 @@ contains
     close(162)
     !
   end subroutine calcu_DSF_wavevector
-  !
-  subroutine printProgressBar(loopindex,loopmax)
-    implicit none
-    integer,parameter::ndigit=50
-    integer loopindex,loopmax
-    integer j
-    write(*,'(a)', advance="no") ' ['
-    do j=1,loopindex*ndigit/loopmax
-      write(*,'(a)', advance="no") '='
-    enddo
-    write(*,'(a)', advance="no") '>'
-    do j=loopindex*ndigit/loopmax+1,ndigit
-      write(*,'(a)', advance="no") ' '
-    enddo
-    write(*,'(a)', advance="no") ']'
-    write(*,'(f6.1,a,a)', advance="no") 100d0*loopindex/loopmax,'%',char(13)
-    ! Finalize
-    if(loopindex.eq.loopmax) write(*,*) 'Finish!'
-  end subroutine printProgressBar
   !
 end module get_expectation_values

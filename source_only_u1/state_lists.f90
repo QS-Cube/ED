@@ -160,7 +160,6 @@ contains
     integer, allocatable :: bp(:)
     allocate(bp(1:NOD_new))
 
-    !i-siteスピンがダウンかどうか、何番目のダウンスピン(l=kr)かを調べる。
     if(NOD>1)then !not FM state
       l = 1
       do kr = 1, NOD
@@ -170,7 +169,6 @@ contains
         end if
       end do
 
-      !新しいスピン状態|b'>
       bp(1:l-1)=n(1:l-1)
       !bp(l:NOD_new)=n(l+1:NOD)!when l=NOD then this is not operated
       bp(l:NOD-1)=n(l+1:NOD)
@@ -194,12 +192,10 @@ contains
 
     if(NOD/=0)then !not FM state
       if(i<n(1))then
-        !新しいスピン状態|b'>
         bp(1)=i
         !bp(2:NOD_new)=n(1:NOD)
         bp(2:NOD+1)=n(1:NOD)
       else if(i>n(NOD))then
-        !新しいスピン状態|b'>
         bp(1:NOD)=n(1:NOD)
         bp(NOD_new)=i
       else
@@ -212,13 +208,11 @@ contains
           end if
         end do
 
-        !新しいスピン状態|b'>
         bp(1:l)=n(1:l)
         bp(l+1)=i
         bp(l+2:NOD+1)=n(l+1:NOD)
       end if
     else if (NOD==0)then
-      !新しいスピン状態|b'>
       bp(1)=i
     end if
 

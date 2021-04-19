@@ -100,7 +100,6 @@ contains
       call system_clock(t1)
       call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,NOD) 
       call system_clock(t2,t_rate, t_max)
-      !write(*,*) "ham_to_vec", (t2-t1)/dble(t_rate)
       alpha(i) = dble(zdotc(dim,psi(1,i),1,Qk(:,1),1))
       if(i > 1)then
         !$OMP parallel do private(ell)
@@ -130,11 +129,6 @@ contains
     end if
     deallocate(iwork_lanc, ifail_lanc, rwork_lanc)
     allocate(ifail_lanc(2*NOM))
-    !
-    !print *, "First lanczos step over"
-    !do i=1,NOM
-    !  print *, i, ene(i)
-    !end do
     !
     !*********************************
     !***** restart lanczos step ******
@@ -209,13 +203,7 @@ contains
         write(*,*) "error in dxyevr in eigen_solver.f90. info =", info; stop 4
       end if
 
-      !print *, "Temporal energy", "  tritr=", tritr
-      !do j=1, NOE
-      !  print *, j, ene(j)
-      !end do
-
       call system_clock(t4,t_rate, t_max)
-      !write(*,*) "time for 1 iteration", (t4-t3)/dble(t_rate), "sec"
 
     end do
     ite_lancz = tritr*NOM
@@ -267,19 +255,12 @@ contains
 
   subroutine fulldia_routines_with_momentum(THS,ham_complex,psi0,ene0)
     use input_param, only : OUTDIR
-!!! Use blas_interfaces, Only: zscal
-!!! Use lapack_example_aux, Only: nagf_file_print_matrix_complex_gen
-!!! Use lapack_interfaces, Only: ddisna, zheev
-!!! Use nag_library, Only: x04daf !ddisna, nag_wp, x02ajf, x04daf, zheev, zscal
     integer, intent(in)::THS
     real(8),intent(inout)::ene0(THS)
     complex(8),intent(in)::ham_complex(THS,THS)
     complex(8),intent(inout)::psi0(THS,THS)
-    !complex(8), allocatable ::v0(:), v1(:)
     integer :: k
     !LAPACK
-    !integer :: nin, nout, ifail, j
-    !real(8) :: value
     integer :: nb, nmax
     integer :: lda, lwork
     integer :: info, lwkopt, n
@@ -291,7 +272,6 @@ contains
     complex(8), external :: zdotc
     External dlamch
     External ddisna, dsyev, dgemv, zheev, x04daf
-    !Intrinsic :: abs, cmplx, conjg, epsilon, max, maxloc, nint, real
 
     nb=THS
     n=THS
@@ -328,11 +308,7 @@ contains
     end if
 
     if(info==0)then
-      !print *, "           "
       print *, "Eigenvalues by Full Diagonalization"
-      !do k=1, THS
-      !  print *, w(k)
-      !end do
       open(111,file=trim(adjustl(OUTDIR))//'full_eigenvalues.dat',position='append')
       do k=1, THS
         write(111,'(es23.15)') w(k)
@@ -352,15 +328,6 @@ contains
     else 
       print *, "Failure in ZHEEV. INFO =", info
     end if
-
-    !check the acuracy by <v|H|v>-E
-    !print *, "check the acuracy"
-    !do k=1, THS
-    !  v0 = a(1:THS,k)
-    !  v1 = 0.0d0
-    !  !calcu H|v0> -> v1
-    !  call zgemv('n',THS,THS,1.0d0,ham_complex,THS,v0,1,0.0d0,v1,1) 
-    !end do
 
   end subroutine fulldia_routines_with_momentum
 
