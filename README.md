@@ -43,7 +43,7 @@ A simple Makefile is prepared to build the executable file "QS3.exe", and the fo
 $ cd script <br>
 $ ./make.sh <br>
 
-After executing the sample, all results are stored in the "output" directory. The reference data is stored in the "output_ref" directory, so please check the calculation results if necessary. 
+After executing the sample, all results are stored in output directories.
 
 # Developers
 
