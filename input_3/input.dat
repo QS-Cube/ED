@@ -1,0 +1,56 @@
+&input_parameters
+NOS    = 36,
+NOD    = 3,
+LX     = 6,
+LY     = 6,
+LZ     = 1,
+KX     = 0,
+KY     = 0,
+KZ     = 0,
+NOxxz  = 108,
+ALG = 1,
+cal_lm = 1,
+cal_cf = 1,
+cal_dsf= 0,
+wr_wf  = 0,
+re_wf  = 0,
+FILExxz= "input_3/list_xxz_term_36.dat",
+FILEwf = "work/",
+OUTDIR = "output_3/",
+&end
+
+&input_static
+NOV    = 2,
+NOLM   = 36,
+NOCF   = 1296,
+FILElm = "input/list_local_mag.dat",
+FILECF = "input/list_cf_ss.dat",
+&end
+
+&input_dynamic
+spsmsz = 3,
+itr_dsf= 200,
+qx     = 0.0d0,
+qy     = 0.0d0,
+qz     = 0.0d0,
+rfield = 0.495d0,
+FILEpos= "input/list_site_position_36_type1.dat",
+&end
+
+&input_lancz
+lnc_ene_conv=1.0d-14,
+minitr=20,
+maxitr=10000,
+itrint=5,
+&end
+
+&input_TRLan
+NOE = 10,
+NOK = 15,
+NOM = 30,
+maxitr=10000,
+lnc_ene_conv=1.0d-14,
+i_vec_min = 1,
+i_vec_max = 1,
+&end
+

@@ -49,5 +49,15 @@ echo "./QS3_only_u1.exe < ./input_2/input.dat > output_2/output.dat"
 ./QS3_only_u1.exe < ./input_2/input.dat > output_2/output.dat
 
 echo "**************"
+echo  "  ex3) AFM HB model on the 6x6 triangular lattice"
+echo  "       with u(1) and translational symmetry"
+echo  "       Solver: Lanczos"
+echo "**************"
+echo "mkdir output_3"
+mkdir output_3
+echo "./QS3.exe < ./input_3/input.dat > output_3/output.dat"
+./QS3.exe < ./input_3/input.dat > output_3/output.dat
+
+echo "**************"
 #cd ../source_DSFLan
 #gfortran -o ../output/DSFLan.exe -Ofast main.f90 
