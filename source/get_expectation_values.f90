@@ -394,7 +394,11 @@ contains
     real(8) :: norm1
     real(8) :: eps, sztot
     integer, parameter :: la=4000
-    real(8) :: alpha_dsf(la), beta_dsf(la)
+    real(8) :: alpha_dsf(la), beta_dsf(la) 
+    !
+    ! alpha_dsf(i) and beta_dsf(i+1) correspond to 
+    ! \alpha_i and \beta_i for Eq.~(23) in Sec.3.9 of arXiv:****.****
+    !
     character(2) :: ex_index
     character(10) :: sztot_index
     real(8)::dznrm2,sztot_new

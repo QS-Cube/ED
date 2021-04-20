@@ -1,0 +1,160 @@
+********************************* Start QS^3 ***************************************
+ ### Read input_parameters. 
+&INPUT_PARAMETERS
+ NOS=         36,
+ NOD=          3,
+ LX=          6,
+ LY=          6,
+ LZ=          1,
+ KX=          0,
+ KY=          0,
+ KZ=          0,
+ NOXXZ=         72,
+ ALG=          2,
+ CAL_LM=          1,
+ CAL_CF=          1,
+ CAL_DSF=          1,
+ WR_WF=          1,
+ RE_WF=          0,
+ FILEXXZ="input/list_xxz_term_36.dat                                                                          ",
+ FILEWF="work/                                                                                               ",
+ OUTDIR="output/                                                                                             ",
+ /
+ ### Read input_static. 
+&INPUT_STATIC
+ NOV=          2,
+ NOLM=         36,
+ NOCF=       1296,
+ FILELM="input/list_local_mag.dat                                                                            ",
+ FILECF="input/list_cf_ss.dat                                                                                ",
+ /
+ ### Read input_dynamic. 
+&INPUT_DYNAMIC
+ SPSMSZ=          3,
+ ITR_DSF=        200,
+ QX=  0.0000000000000000     ,
+ QY=  0.0000000000000000     ,
+ QZ=  0.0000000000000000     ,
+ RFIELD= 0.49500000000000000     ,
+ FILEPOS="input/list_site_position_36_type1.dat                                                               ",
+ /
+ ### Set wavevectors. 
+ ### Set random_seed. 
+ ### Allocation arrays. 
+ ### Set phase factors. 
+ ### Read FILExxz. 
+ ### write ouput/FILExxz.dat. 
+ ### Store combination numbers. 
+ ### Set THS. 
+   THS   =         7140
+ ### Set translational operations. 
+ ### Allocate and Set arrays for state_list. 
+ ********************
+ max_threads           4
+ ********************
+ ### Count # of representative states. 
+ ### Allocate work arrays for lists. 
+ ### Store representative states. 
+ ### Allocate arrays for lists. 
+ ### Store reordered lists. 
+   THS(k)   =          201
+ ### Start the thick-restarted Lanczos method. 
+&INPUT_TRLAN
+ NOE=         10,
+ NOK=         15,
+ NOM=         30,
+ MAXITR=      10000,
+ LNC_ENE_CONV=  1.0000000000000000E-014,
+ I_VEC_MIN=          1,
+ I_VEC_MAX=          1,
+ /
+ Reduced THS=         201
+************************************************************************************
+ Eigen solver: my thick restart Lanczos
+tritr, ene(NOK), max_conv, flag:     1   -1.308399503810694E+01    3.1E-01    0
+tritr, ene(NOK), max_conv, flag:     2   -1.450235701955083E+01    9.8E-02    0
+tritr, ene(NOK), max_conv, flag:     3   -1.473818363546839E+01    1.6E-02    0
+tritr, ene(NOK), max_conv, flag:     4   -1.482435285824178E+01    5.8E-03    0
+tritr, ene(NOK), max_conv, flag:     5   -1.490180683350440E+01    3.4E-02    0
+tritr, ene(NOK), max_conv, flag:     6   -1.490369763515173E+01    3.3E-02    0
+tritr, ene(NOK), max_conv, flag:     7   -1.490369763515452E+01    8.1E-07    0
+tritr, ene(NOK), max_conv, flag:     8   -1.490369763515452E+01    7.8E-16    1
+tritr, ene(NOK), max_conv, flag:     9   -1.490369763515451E+01    7.8E-16    2
+ Check accuracy <Phi|H|Phi>
+           1 ( -17.999999999999957     ,  9.5062846483529029E-016)
+           2 ( -17.041771600230870     , -8.6856833642178140E-016)
+           3 ( -16.910528776882483     , -1.4728886513215578E-016)
+           4 ( -16.041319762322345     ,  1.9035032610466990E-016)
+           5 ( -16.019754218139145     ,  5.8355826681314480E-016)
+           6 ( -16.019754218139141     ,  1.2059038663477855E-016)
+           7 ( -15.999999999999991     , -3.3913843955323761E-016)
+           8 ( -16.000000000000000     ,  8.6606069538140438E-016)
+           9 ( -15.848248103032251     , -6.4450530161426575E-018)
+          10 ( -15.570591409236380     ,  1.7033370936328166E-015)
+***********************************************************************************
+ total lanczos step:         270
+***********************************************************************************
+    i           E(i)
+    1   -1.800000000000006E+01
+    2   -1.704177160023086E+01
+    3   -1.691052877688254E+01
+    4   -1.604131976232237E+01
+    5   -1.601975421813914E+01
+    6   -1.601975421813912E+01
+    7   -1.600000000000001E+01
+    8   -1.599999999999999E+01
+    9   -1.584824810303227E+01
+   10   -1.557059140923639E+01
+***********************************************************************************
+ ### Write wavevectors. 
+  Write wave functions (           1 -th state) 
+                                                                                                work/wf1.bin                                                                                             
+************************************************************************************
+ ### Check orthogonality. 
+ (  2.9837243786801082E-016, -5.5511151231257827E-017)
+ ### Check normalizations. 
+           1 ( 0.99999999999999845     ,  0.0000000000000000     )
+           2 ( 0.99999999999999911     ,  0.0000000000000000     )
+ ### Check normalizations again. 
+           1 (  1.0000000000000002     ,  0.0000000000000000     )
+           2 (  1.0000000000000002     ,  0.0000000000000000     )
+ ### Allocate arrays for expectation values. 
+ ### Read FILECF [list_expe_ss(2:1:-1,i)]
+ ### Get local magnetizations. 
+ ### write ouput/local_mag.dat. 
+ ### Get correlation functions. 
+ ### write ouput/SzSz-corr.dat. 
+ ### write ouput/SpSm-corr.dat. 
+ ### Set kvec_calc. 
+ ### Calculate DSF. 
+ DSF calculation starts
+ ### Set epsilon. 
+   1.0000000000000000      psi
+ ### Set rk_a_new with a \in {x,y,z}. 
+ ### Set NOD_new. 
+ ### Allocate and Set arrays for intermediate state_lists. 
+   THS_new   =         7140
+ ********************
+ max_threads           4
+ ********************
+ ### Count # of representative states. 
+ ### Allocate work arrays for lists_new. 
+ ### Store representative states_new. 
+ ### Allocate arrays for lists_new. 
+ ### Store reordered lists_new. 
+   dim_new   =          201
+ ### Set phase factors for intermediate states. 
+ ### Allocate work arrays. 
+ ### Initializations: alpha, beta, fns 
+ ### Calculate Sq_a. 
+ ### check <f_1|f_1>=1. 
+ ### calculate H|f_1>. 
+ ### consider zeeman term. 
+ ### now treating NOD +- 1 basis for S+-(q, w) or NOD_new=NOD for Sz(q,w). 
+ ### <f1|H|f1>/<f1|f1>, now <f1|f1>=1. 
+ ### calculate |f_2>. 
+ ### beta_dsf(2)=beta(2)**2=<f2|f2>/<f1|f1>, <f1|f1>=1. 
+ ### normalize |f_2>. 
+ ### Start iterative calculations 
+Time:     0.366 [sec]
+****************************************************************************************
