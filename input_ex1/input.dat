@@ -14,17 +14,17 @@ cal_cf = 1,
 cal_dsf= 1,
 wr_wf  = 1,
 re_wf  = 0,
-FILExxz= "input/list_xxz_term_36.dat",
+FILExxz= "input_ex1/list_xxz_term_36.dat",
 FILEwf = "work/",
-OUTDIR = "output/",
+OUTDIR = "output_ex1/",
 &end
 
 &input_static
 NOV    = 2,
 NOLM   = 36,
 NOCF   = 1296,
-FILElm = "input/list_local_mag.dat",
-FILECF = "input/list_cf_ss.dat",
+FILElm = "input_ex1/list_local_mag.dat",
+FILECF = "input_ex1/list_cf_ss.dat",
 &end
 
 &input_dynamic
@@ -34,7 +34,7 @@ qx     = 0.0d0,
 qy     = 0.0d0,
 qz     = 0.0d0,
 rfield = 0.495d0,
-FILEpos= "input/list_site_position_36_type1.dat",
+FILEpos= "input_ex1/list_site_position_36_type1.dat",
 &end
 
 &input_lancz
