@@ -24,26 +24,26 @@ Spin <i>S</i> = 1/2 systems with the U(1) and translational symmetries.
 
 # Requirements
 
-This package includes the Fortran source codes, samples, and manual. 
-A Fortran compiler and BLAS/LAPACK are prerequisites.
+This package, containing the Fortran source codes, samples, and manual, is available. For the building, Fortran compiler with BLAS/LAPACK library is prerequisite. 
 
 # Compile
 
-If you have your Git account, please clone this repository on your local computer: 
+For those who have their own Git accounts, simply clone the repository on their local computers: 
 
 $ git clone https://github.com/QS-Cube/ED.git
 
-If you do not have, please push "Code" button and "Download ZIP" on this web page and get "ED-main.zip" and unpack the zip: 
+Otherwise, go to the web page and click the "Code" button and "Download ZIP" to get "ED-main.zip". The zip file is unpacked as 
 
 $ unzip ED-main.zip <br>
 $ cd ED-main
 
-A simple Makefile is prepared to build the executable files, and you should change the path of BLAS/LAPACK or MKL written in "source*/Makefile". Then, following procedures after the cloning/downloading will give the executable and execute sample programs
+A simple Makefile is provided to build the executable files "QS3.exe" for systems preserving the translational symmetry and "QS3\_only\_u1.exe" for systems without the translational symmetry.
+The following procedures after the cloning or downloading will give the executable file and execute sample programs
 
 $ cd script <br>
 $ ./make.sh <br>
 
-After executing the sample, all results are stored in output directories.
+After executing samples, all results are stored in output directories.
 
 # Developers
 
