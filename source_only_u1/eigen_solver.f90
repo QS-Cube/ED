@@ -140,7 +140,7 @@ contains
     do tritr = 1, maxitr
       call system_clock(t3)
       !
-      ccoef = conjg(ccoef)
+      !ccoef = conjg(ccoef)
       call zgemm('N', 'N', dim, NOK, NOM, (1.0d0,0.0d0), &
         psi, dim, ccoef, NOM, (0.0d0,0.0d0), Qk, dim)
       call zcopy(dim*NOK,Qk,1,psi,1)
