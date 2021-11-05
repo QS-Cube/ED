@@ -1,19 +1,23 @@
 #!/bin/sh
-echo "cd ../source"
-cd ../source
-echo "make"
-make
-echo "cd ../source_only_u1"
-cd ../source_only_u1
-echo "make"
-make
-echo "cd ../source_DSFLan"
-cd ../source_DSFLan
-echo "ifort -o DSFLan.exe -Ofast main.f90"
-gfortran -o ../DSFLan.exe -Ofast main.f90 
-
+#################################
+# ARG1 = ifort / gfortran
+# ARG2 = lapack / mkl
+#################################
+ARG1=gfortran 
+ARG2=mkl
+#################################
 echo "cd ../"
 cd ../
+echo "./configure FC=${ARG1} --with-lapak=${ARG2}"
+./configure FC=${ARG1} --with-lapack=${ARG2}
+echo "make"
+make
+echo "mv source/QS3 QS3.exe"
+mv source/QS3 ./QS3.exe 1> /dev/null 2>&1
+echo "mv source_only_u1/QS3_only_u1 ./QS3_only_u1.exe"
+mv source_only_u1/QS3_only_u1 ./QS3_only_u1.exe 1> /dev/null 2>&1
+echo "mv source_DSFLan/DSFLan ./DSFLan.exe"
+mv source_DSFLan/DSFLan ./DSFLan.exe 1> /dev/null 2>&1
 
 echo "**************"
 echo  "  ex 1) FM HB model on the 6x6 square lattice"
