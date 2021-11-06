@@ -88,9 +88,10 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_QS3_only_u1_OBJECTS = input_param.$(OBJEXT) state_lists.$(OBJEXT) \
-	ham2vec_v3.$(OBJEXT) lanczos.$(OBJEXT) eigen_solver.$(OBJEXT) \
-	get_expectation_values.$(OBJEXT) main.$(OBJEXT)
+am_QS3_only_u1_OBJECTS = input_param.$(OBJEXT) my_l1_blas.$(OBJEXT) \
+	state_lists.$(OBJEXT) ham2vec_v3.$(OBJEXT) lanczos.$(OBJEXT) \
+	eigen_solver.$(OBJEXT) get_expectation_values.$(OBJEXT) \
+	main.$(OBJEXT)
 QS3_only_u1_OBJECTS = $(am_QS3_only_u1_OBJECTS)
 QS3_only_u1_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -233,6 +234,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 QS3_only_u1_SOURCES = input_param.f90 \
+              my_l1_blas.f90 \
               state_lists.f90 \
               ham2vec_v3.f90 \
               lanczos.f90 \

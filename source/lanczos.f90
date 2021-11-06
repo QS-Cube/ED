@@ -1,4 +1,5 @@
 module lanczos
+  use my_l1_blas
   use ham2vec
   implicit none
   integer :: ite_lancz, maxitr, dim, minitr, itrint
@@ -66,7 +67,8 @@ contains
       psi(i,1) = psi(i,1) - (0.5d0, 0.5d0)
     end do
     beta(0) = dznrm2( dim, psi(1,1), 1 )
-    call zdscal( dim, 1.0d0 / beta(0), psi(1,1), 1 )
+    !call zdscal( dim, 1.0d0 / beta(0), psi(1,1), 1 )
+    call my_zdscal( dim, 1.0d0 / beta(0), psi(1,1))
     call zcopy(dim,psi(1,1),1,psi_io,1)
     tmp = 0.0d0
     mitr= min(maxitr,dim)
@@ -79,7 +81,8 @@ contains
           psi(ell,2) = psi(ell,2) - alpha(i)*psi(ell,1) - beta(i-1)*psi(ell,3)
         end do
       else
-        call zaxpy( dim, (-1.0d0,0.0d0)*alpha(i), psi(1,1), 1, psi(1,2), 1 )
+        !call zaxpy( dim, (-1.0d0,0.0d0)*alpha(i), psi(1,1), 1, psi(1,2), 1 )
+        call my_zaxpy( dim, (-1.0d0,0.0d0)*alpha(i), psi(1,1), psi(1,2))
       end if
       beta(i) = dznrm2( dim, psi(1,2), 1 )
       call zcopy(dim,psi(1,1),1,psi(1,3),1)
@@ -118,7 +121,8 @@ contains
     ! calcu. eigenvector
     !
     call zcopy(dim,psi_io,1,psi(1,1),1)
-    call zdscal(dim, z(1,1), psi_io, 1)
+    !call zdscal(dim, z(1,1), psi_io, 1)
+    call my_zdscal(dim, z(1,1), psi_io)
     tmp = 0.0d0
     do i = 1, ite_lancz-1
       call ham_to_vec_wave_vector(psi(:,2),psi(:,1),dim,NOD,list_s,list_r,explist) 
@@ -138,10 +142,12 @@ contains
       do ell = 1, dim
         psi(ell,1) = psi(ell,2) / beta(i)
       end do
-      call zaxpy( dim, (1.0d0,0.0d0)*z(i+1,1), psi(1,1), 1, psi_io, 1 )
+      !call zaxpy( dim, (1.0d0,0.0d0)*z(i+1,1), psi(1,1), 1, psi_io, 1 )
+      call my_zaxpy( dim, (1.0d0,0.0d0)*z(i+1,1), psi(1,1), psi_io)
     end do
     beta(0) = dznrm2( dim, psi_io, 1 )
-    call zdscal( dim, 1.0d0 / beta(0), psi_io, 1 )    
+    !call zdscal( dim, 1.0d0 / beta(0), psi_io, 1 )    
+    call my_zdscal( dim, 1.0d0 / beta(0), psi_io)
     return
   end subroutine lancz_eigen_val
   !

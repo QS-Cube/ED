@@ -1,4 +1,5 @@
 module get_expectation_values
+  use my_l1_blas
   implicit none
   integer, allocatable :: list_expe_sz(:), list_expe_ss(:,:)
   real(8), allocatable :: expe_sz(:,:)
@@ -370,7 +371,8 @@ contains
       end do
     end if
     !
-    call zdscal(dim_new,1.0d0/sqrt(dble(NOS)),fn,1)
+    !call zdscal(dim_new,1.0d0/sqrt(dble(NOS)),fn,1)
+    call my_zdscal(dim_new,1.0d0/sqrt(dble(NOS)),fn)
     !
   end subroutine calcu_Sq_a
 
@@ -485,7 +487,8 @@ contains
       call calcu_Sq_a(spsmsz,psi(1:dim,1),fn(1:dim_new),&
         kvec_calc,rkx_new,rky_new,rkz_new,dim,dim_new,Spos(1:3,1:NOS)) 
       norm1=dble(zdotc(dim_new,fn(1),1,fn(1),1))
-      call zdscal(dim_new,1.0d0/sqrt(norm1),fn,1)
+      !call zdscal(dim_new,1.0d0/sqrt(norm1),fn,1)
+      call my_zdscal(dim_new,1.0d0/sqrt(norm1),fn)
     end if
 
     write(*,'(" ### check <f_1|f_1>=1. ")')
@@ -503,7 +506,8 @@ contains
     sztot_new=dble(NOS)/2.0d0-dble(NOD_new)
     !
     write(*,'(" ### now treating NOD +- 1 basis for S+-(q, w) or NOD_new=NOD for Sz(q,w). ")')
-    call zaxpy(dim_new,(1.0d0,0.0d0)*(-rfield*sztot_new),fn,1,fnp1,1)
+    !call zaxpy(dim_new,(1.0d0,0.0d0)*(-rfield*sztot_new),fn,1,fnp1,1)
+    call my_zaxpy(dim_new,(1.0d0,0.0d0)*(-rfield*sztot_new),fn,fnp1)
     !
     write(*,'(" ### <f1|H|f1>/<f1|f1>, now <f1|f1>=1. ")')
     alpha_dsf(1)=dble(zdotc(dim_new,fn(1),1,fnp1(1),1))
@@ -523,13 +527,15 @@ contains
     if(dim_new > 1)then
       !
       write(*,'(" ### calculate |f_2>. ")')
-      call zaxpy(dim_new,(1.0d0,0.0d0)*(-alpha_dsf(1)),fn,1,fnp1,1)
+      !call zaxpy(dim_new,(1.0d0,0.0d0)*(-alpha_dsf(1)),fn,1,fnp1,1)
+      call my_zaxpy(dim_new,(1.0d0,0.0d0)*(-alpha_dsf(1)),fn,fnp1)
       !
       write(*,'(" ### beta_dsf(2)=beta(2)**2=<f2|f2>/<f1|f1>, <f1|f1>=1. ")')
       beta_dsf(2)=dble(zdotc(dim_new,fnp1(1),1,fnp1(1),1))
       !                                                    
       write(*,'(" ### normalize |f_2>. ")')
-      call zdscal(dim_new,1.0d0/sqrt(beta_dsf(2)),fnp1,1)
+      !call zdscal(dim_new,1.0d0/sqrt(beta_dsf(2)),fnp1,1)
+      call my_zdscal(dim_new,1.0d0/sqrt(beta_dsf(2)),fnp1)
       !
       write(*,'(" ### Start iterative calculations ")')
       do itr_num=2, itr_dsf
@@ -549,7 +555,8 @@ contains
         sztot_new=dble(NOS)/2.0d0-dble(NOD_new) 
         !
         !now treating NOD +- 1 basis for S+-(q, w) or NOD_new=NOD for Sz(q,w)
-        call zaxpy(dim_new,(1.0d0,0.0d0)*(-rfield*sztot_new),fn,1,fnp1,1)
+        !call zaxpy(dim_new,(1.0d0,0.0d0)*(-rfield*sztot_new),fn,1,fnp1,1)
+        call my_zaxpy(dim_new,(1.0d0,0.0d0)*(-rfield*sztot_new),fn,fnp1)
         !
         alpha_dsf(itr_num)=dble(zdotc(dim_new,fn(1),1,fnp1(1),1)) 
         !<f_n|H|f_n>/<f_n|f_n>, now |f_n> is normalized.
@@ -568,14 +575,19 @@ contains
         if(itr_num==dim_new) exit
         !
         !calcu |f_n+1>=H|f_n>-alpha(n)*|f_n>-beta(n)*|f_n-1>. Note that beta_dsf is equal to beta**2
-        call zaxpy(dim_new,(1.0d0,0.0d0)*(-alpha_dsf(itr_num)),fn,1,fnp1,1)
-        call zaxpy(dim_new,(1.0d0,0.0d0)*(-sqrt(beta_dsf(itr_num))),fnm1,1,fnp1,1)
+        !call zaxpy(dim_new,(1.0d0,0.0d0)*(-alpha_dsf(itr_num)),fn,1,fnp1,1)
+        !call zaxpy(dim_new,(1.0d0,0.0d0)*(-sqrt(beta_dsf(itr_num))),fnm1,1,fnp1,1)
+        !$omp parallel do
+        do i = 1, dim_new
+          fnp1(i) = fnp1(i) - alpha_dsf(itr_num)*fn(i) - sqrt(beta_dsf(itr_num))*fnm1(i)
+        end do
         !
         !calcu beta(n+1)**2 Note that |f_n> is already normalized
         beta_dsf(itr_num+1)=dble(zdotc(dim_new,fnp1(1),1,fnp1(1),1))  !<f_n+1|f_n+1>/<f_n|f_n>
         !
         !normalize |f_n+1>
-        call zdscal(dim_new,1.0d0/sqrt(beta_dsf(itr_num+1)),fnp1,1)
+        !call zdscal(dim_new,1.0d0/sqrt(beta_dsf(itr_num+1)),fnp1,1)
+        call my_zdscal(dim_new,1.0d0/sqrt(beta_dsf(itr_num+1)),fnp1)
         !
       end do
     end if

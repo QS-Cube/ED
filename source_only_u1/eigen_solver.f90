@@ -1,4 +1,5 @@
 module eigen_solver
+  use my_l1_blas
   use ham2vec
   implicit none
   integer :: NOE,NOK, NOM, maxitr, ite_lancz, i_vec_min, i_vec_max
@@ -96,7 +97,8 @@ contains
     !
     beta(0) = dznrm2( dim, psi(1,1), 1 )
     do i = 1, NOM
-      call zdscal( dim, 1.0d0/beta(i-1), psi(1,i), 1 )
+      !call zdscal( dim, 1.0d0/beta(i-1), psi(1,i), 1 )
+      call my_zdscal( dim, 1.0d0/beta(i-1), psi(1,i) )
       call system_clock(t1)
       call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,NOD) 
       call system_clock(t2,t_rate, t_max)
@@ -118,7 +120,8 @@ contains
       beta(i) = dznrm2( dim, psi(1,i+1), 1 )
     end do
     !
-    call zdscal( dim, 1.0d0/beta(NOM), psi(1,NOM+1), 1 )
+    !call zdscal( dim, 1.0d0/beta(NOM), psi(1,NOM+1), 1 )
+    call my_zdscal( dim, 1.0d0/beta(NOM), psi(1,NOM+1))
     !
     abstol = 2.0d0*dlamch('S')
     allocate(iwork_lanc(5*NOM), ifail_lanc(NOM), rwork_lanc(5*NOM))
@@ -165,7 +168,8 @@ contains
       call ham_to_vec_wave_vector(Qk(:,1),psi(:,i),dim,NOD) 
       calpha(i) = zdotc(dim,psi(1,i),1,Qk(1,1),1)
       do j=1, NOK
-        call zaxpy(dim, -cbeta(j),psi(1,j),1,Qk(1,1),1)
+        !call zaxpy(dim, -cbeta(j),psi(1,j),1,Qk(1,1),1)
+        call my_zaxpy(dim, -cbeta(j),psi(1,j),Qk(1,1))
       end do
       !$OMP parallel do private(ell)
       do ell = 1, dim
@@ -227,7 +231,8 @@ contains
     subroutine full_reorthogonalization_complex 
       do j = 1, i-1 
         overlap(j) = zdotc(dim,psi(1,j),1,psi(:,i+1),1) 
-        call zaxpy(dim,-overlap(j),psi(1,j),1,psi(:,i+1),1) 
+        !call zaxpy(dim,-overlap(j),psi(1,j),1,psi(:,i+1),1) 
+        call my_zaxpy(dim,-overlap(j),psi(1,j),psi(:,i+1)) 
       end do
     end subroutine full_reorthogonalization_complex
     !
