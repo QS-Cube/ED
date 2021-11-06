@@ -45,7 +45,8 @@ A simple Makefile is provided to build the executable files "QS3.exe" for system
 The following procedures after the cloning or downloading will give the executable file and execute sample programs
 
 $ cd script <br>
-$ ./make.sh (Before running make.sh, open this file and select the compiler (ARG1=gfortran/ifort) and linear algebra library (ARG2=lapack/mkl).)<br>
+$ ./make.sh <br>
+(Before running make.sh, open this file and select the compiler (ARG1=gfortran/ifort) and linear algebra library (ARG2=lapack/mkl).)<br>
 
 After executing samples, all results are stored in output directories.
 
