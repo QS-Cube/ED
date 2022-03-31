@@ -52,9 +52,9 @@ After executing samples, all results are stored in output directories.
 
 # Contact Us
 
-If you have any problems compiling or installing QS<sup>3</sup>, or if you have any requests for future additional functions in QS<sup>3</sup>, please comment in the "Issues" tag of this repository, or contact the developers of QS<sup>3</sup>:
-Hiroshi Ueda: ueda.hiroshi.qiqb@osaka-u.ac.jp
-Tokuro Shimokawa: tokuro.shimokawa@oist.jp
+If you have any problems compiling or installing QS<sup>3</sup>, or if you have any requests for future additional functions in QS<sup>3</sup>, please comment in the "Issues" tag of this repository, or contact the developers of QS<sup>3</sup>: <br>
+Hiroshi Ueda: ueda.hiroshi.qiqb@osaka-u.ac.jp <br>
+Tokuro Shimokawa: tokuro.shimokawa@oist.jp <br>
 We will reply to your comments after fixing the issues you found.
 
 # Developers
